@@ -9,13 +9,13 @@ This packages keeps track of servers running your application and provides a way
 
 ```javascript
 Meteor.publish(null, function(){
-if(this.userId && this._session){
-var id = UserSessions.insert({serverId:ServerPresence.serverId(), userId:this.userId, sessionId:this._session.id});
+    if(this.userId && this._session){
+        var id = UserSessions.insert({serverId:ServerPresence.serverId(), userId:this.userId, sessionId:this._session.id});
 
-this.onStop(function(){
-UserSessions.remove(id);
-});
-}
+        this.onStop(function(){
+            UserSessions.remove(id);
+        });
+    }
 }, {is_auto:true});
 ```
 
