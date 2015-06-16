@@ -101,7 +101,7 @@ var observe = function(){
     });
 };
 
-ServerPresence.registerCleanupFunction = function(cleanupFunction){
+ServerPresence.onCleanup = function(cleanupFunction){
     if(_.isFunction(cleanupFunction)){
         exitFunctions.push(cleanupFunction);
     }else{
