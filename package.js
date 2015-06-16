@@ -1,8 +1,8 @@
 Package.describe({
     name: 'socialize:server-presence',
     summary: 'Scalable server presence',
-    version: '0.1.0',
-    git: ''
+    version: '0.1.1',
+    git: 'https://github.com/copleykj/socialize-server-presence.git'
 });
 
 Package.onUse(function(api) {
