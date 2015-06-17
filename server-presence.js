@@ -88,14 +88,12 @@ var observe = function(){
                 }else{
                     insert();
                 }
-            }else{
+            }else if(isWatcher){
                 if(!document.graceful){
                     runCleanupFunctions(document._id);
                 }
-
-                if(document.watcher){
-                    updateWatcher();
-                }
+            }else if(document.watcher){
+                updateWatcher();
             }
         }
     });
@@ -105,7 +103,7 @@ ServerPresence.onCleanup = function(cleanupFunction){
     if(_.isFunction(cleanupFunction)){
         exitFunctions.push(cleanupFunction);
     }else{
-        throw new Meteor.Error("Not A Function", "registerCleanupFunction requires function as parameter");
+        throw new Meteor.Error("Not A Function", "ServerPresence.onCleanup requires function as parameter");
     }
 };
 
