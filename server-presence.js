@@ -93,6 +93,9 @@ var observe = function(){
                     runCleanupFunctions(document._id);
                 }
             }else if(document.watcher){
+                if(!document.graceful){
+                    runCleanupFunctions(document._id);
+                }
                 updateWatcher();
             }
         }
