@@ -1,120 +1,127 @@
-var Servers = new Mongo.Collection("presence:servers");
+/* eslint-disable import/no-unresolved */
+import { Meteor } from 'meteor/meteor';
+import { Mongo } from 'meteor/mongo';
+import { _ } from 'meteor/underscore';
+/* eslint-enable import/no-unresolved */
 
-Servers._ensureIndex({"lastPing": 1 }, { expireAfterSeconds: 10 });
-Servers._ensureIndex({createdAt:-1});
+const Servers = new Mongo.Collection('presence:servers');
 
-var serverId = null;
-var isWatcher = false;
-var observeHandle = null;
-var intervalHandle = null;
-var exitFunctions = [];
+Servers._ensureIndex({ lastPing: 1 }, { expireAfterSeconds: 10 });
+Servers._ensureIndex({ createdAt: -1 });
 
-ServerPresence = {};
+let serverId = null;
+let isWatcher = false;
+let observeHandle = null;
 
-var insert = function() {
-    var date = new Date();
-    serverId = Servers.insert({lastPing:date, createdAt:date});
+const exitFunctions = [];
+
+const ServerPresence = {};
+
+export default ServerPresence;
+
+const insert = () => {
+    const date = new Date();
+    serverId = Servers.insert({ lastPing: date, createdAt: date });
 };
 
-var start = function () {
+const runCleanupFunctions = (removedServerId) => {
+    _.each(exitFunctions, (exitFunc) => {
+        exitFunc(removedServerId);
+    });
+};
+
+const setAsWatcher = () => {
+    isWatcher = true;
+    Servers.update({ _id: serverId }, { $set: { watcher: true } });
+};
+
+const updateWatcher = () => {
+    const server = Servers.findOne({}, { sort: { createdAt: -1 } });
+    if (server._id === serverId) {
+        setAsWatcher();
+    }
+};
+
+const observe = () => {
+    observeHandle = Servers.find().observe({
+        removed(document) {
+            if (document._id === serverId) {
+                if (!isWatcher) {
+                    Meteor._debug('Server Presence Timeout', 'The server-presence package has detected inconsistent presence state. To avoid inconsistent database state your application is exiting.');
+                    process.exit();
+                } else {
+                    insert();
+                }
+            } else if (isWatcher) {
+                if (!document.graceful) {
+                    runCleanupFunctions(document._id);
+                }
+            } else if (document.watcher) {
+                if (!document.graceful) {
+                    runCleanupFunctions(document._id);
+                }
+                updateWatcher();
+            }
+        },
+    });
+};
+
+const checkForWatcher = () => {
+    const current = Servers.findOne({ watcher: true });
+    if (current) {
+        return true;
+    }
+    setAsWatcher();
+    return false;
+};
+
+const start = () => {
     observe();
-    intervalHandle = Meteor.setInterval(function() {
-        Servers.update(serverId, {$set:{lastPing:new Date()}});
+
+    Meteor.setInterval(function serverTick() {
+        Servers.update(serverId, { $set: { lastPing: new Date() } });
+        return true;
     }, 5000);
+
     insert();
 
-    //if there isn't any other instance watching and doing cleanup
-    //then we need to do a full cleanup since this is likely the only instance
-    if(!checkForWatcher()){
+    // if there isn't any other instance watching and doing cleanup
+    // then we need to do a full cleanup since this is likely the only instance
+    if (!checkForWatcher()) {
         runCleanupFunctions();
     }
 };
 
+const exit = () => {
+    // Call all of our externally supplied exit functions
+    runCleanupFunctions(serverId);
+
+    // Exit application gracefully since we've caught SIGINT, SIGTERM and SIGHUP
+    process.exit();
+};
 
 /*
 *  We have to bind the meteor environment here since process event callbacks
 *  run outside fibers
 */
-var stop = Meteor.bindEnvironment(function () {
-    Servers.update({_id:serverId}, {$set:{graceful:true}});
+const stop = Meteor.bindEnvironment(function boundEnvironment() {
+    Servers.update({ _id: serverId }, { $set: { graceful: true } });
     observeHandle.stop();
     exit();
 });
 
-var exit = function () {
-    //Call all of our externally supplied exit functions
-    runCleanupFunctions(serverId);
 
-    //Exit application gracefully since we've caught SIGINT, SIGTERM and SIGHUP
-    process.exit();
-
-};
-
-var runCleanupFunctions = function(serverId) {
-    _.each(exitFunctions, function(exitFunc){
-        exitFunc(serverId);
-    });
-};
-
-var checkForWatcher = function() {
-    var current = Servers.findOne({watcher:true});
-    if(!current){
-        setAsWatcher();
-    }else{
-        return true;
-    }
-};
-
-var updateWatcher = function() {
-    var server = Servers.findOne({}, {sort:{createdAt:-1}});
-    if(server._id === serverId){
-        setAsWatcher();
-    }
-};
-
-var setAsWatcher = function() {
-    isWatcher = true;
-    Servers.update({_id:serverId}, {$set:{watcher:true}});
-};
-
-var observe = function(){
-    var self = this;
-    observeHandle = Servers.find().observe({
-        removed: function(document){
-            if(document._id === serverId){
-                if(!isWatcher){
-                    throw new Meteor.Error("Server Presence Timeout", "The server-presence package has detected inconsistent presence state. To avoid inconsistent database state your application is exiting.");
-                    process.exit();
-                }else{
-                    insert();
-                }
-            }else if(isWatcher){
-                if(!document.graceful){
-                    runCleanupFunctions(document._id);
-                }
-            }else if(document.watcher){
-                if(!document.graceful){
-                    runCleanupFunctions(document._id);
-                }
-                updateWatcher();
-            }
-        }
-    });
-};
-
-ServerPresence.onCleanup = function(cleanupFunction){
-    if(_.isFunction(cleanupFunction)){
+ServerPresence.onCleanup = (cleanupFunction) => {
+    if (_.isFunction(cleanupFunction)) {
         exitFunctions.push(cleanupFunction);
-    }else{
-        throw new Meteor.Error("Not A Function", "ServerPresence.onCleanup requires function as parameter");
+    } else {
+        throw new Meteor.Error('Not A Function', 'ServerPresence.onCleanup requires function as parameter');
     }
 };
 
-ServerPresence.serverId = function() {
-    return serverId;
-};
+ServerPresence.serverId = () => serverId;
 
-Meteor.startup(function () {
+Meteor.startup(() => {
     start();
 });
 
@@ -124,8 +131,8 @@ Meteor.startup(function () {
 *  signal sent when a system shuts down, it doesn't make much sense to only run out cleanup on
 *  HUP signals.
 */
-process.on("SIGTERM", stop);
+process.on('SIGTERM', stop);
 
-process.on("SIGINT", stop);
+process.on('SIGINT', stop);
 
-process.on("SIGHUP", stop);
+process.on('SIGHUP', stop);
