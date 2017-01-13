@@ -15,9 +15,8 @@ let observeHandle = null;
 
 const exitFunctions = [];
 
-const ServerPresence = {};
-
-export default ServerPresence;
+/* eslint-disable import/prefer-default-export */
+export const ServerPresence = {};
 
 const insert = () => {
     const date = new Date();
