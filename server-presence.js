@@ -1,7 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import { _ } from 'meteor/underscore';
 /* eslint-enable import/no-unresolved */
 
 const Servers = new Mongo.Collection('presence:servers');
@@ -24,7 +23,7 @@ const insert = () => {
 };
 
 const runCleanupFunctions = (removedServerId) => {
-    _.each(exitFunctions, (exitFunc) => {
+    exitFunctions.forEach((exitFunc) => {
         exitFunc(removedServerId);
     });
 };
@@ -111,7 +110,7 @@ const stop = Meteor.bindEnvironment(function boundEnvironment() {
 
 
 ServerPresence.onCleanup = (cleanupFunction) => {
-    if (_.isFunction(cleanupFunction)) {
+    if ('function' === typeof cleanupFunction) {
         exitFunctions.push(cleanupFunction);
     } else {
         throw new Meteor.Error('Not A Function', 'ServerPresence.onCleanup requires function as parameter');

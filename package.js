@@ -9,7 +9,7 @@ Package.describe({
 Package.onUse(function _(api) {
     api.versionsFrom('1.3');
 
-    api.use(['ecmascript', 'mongo', 'underscore'], 'server');
+    api.use(['ecmascript', 'mongo'], 'server');
 
     api.mainModule('server-presence.js', 'server');
 });
