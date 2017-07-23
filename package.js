@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+/* global Package */
 Package.describe({
     name: 'socialize:server-presence',
     summary: 'Scalable server presence',
