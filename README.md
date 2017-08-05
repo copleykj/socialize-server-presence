@@ -3,6 +3,12 @@
 This packages keeps track of servers running your application and provides a way to run cleanup tasks when they die
 
 
+## Installation ##
+
+```shell
+$ meteor add socialize:server-time
+```
+
 ## API ##
 
 **`ServerPresence.serverId();`** - Get the current Id of the server.
