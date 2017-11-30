@@ -6,7 +6,7 @@ This packages keeps track of servers running your application and provides a way
 ## Installation ##
 
 ```shell
-$ meteor add socialize:server-time
+$ meteor add socialize:server-presence
 ```
 
 ## API ##
