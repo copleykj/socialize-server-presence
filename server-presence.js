@@ -11,6 +11,7 @@ Servers._ensureIndex({ createdAt: -1 });
 let serverId = null;
 let isWatcher = false;
 let observeHandle = null;
+let exitGracefully = true;
 
 const exitFunctions = [];
 
@@ -46,7 +47,8 @@ const observe = () => {
             if (document._id === serverId) {
                 if (!isWatcher) {
                     Meteor._debug('Server Presence Timeout', 'The server-presence package has detected inconsistent presence state. To avoid inconsistent database state your application is exiting.');
-                    process.exit();
+                    exitGracefully = false;
+                    process.kill(process.pid, 'SIGHUP');
                 } else {
                     insert();
                 }
@@ -100,9 +102,11 @@ const exit = () => {
 *  run outside fibers
 */
 const stop = Meteor.bindEnvironment(function boundEnvironment() {
-    Servers.update({ _id: serverId }, { $set: { graceful: true } });
-    observeHandle.stop();
-    exit();
+    if (exitGracefully) {
+        Servers.update({ _id: serverId }, { $set: { graceful: true } });
+        observeHandle.stop();
+        exit();
+    }
 });
 
 
