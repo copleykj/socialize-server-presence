@@ -110,7 +110,7 @@ const stop = Meteor.bindEnvironment(function boundEnvironment() {
 
 
 ServerPresence.onCleanup = (cleanupFunction) => {
-    if ('function' === typeof cleanupFunction) {
+    if (typeof cleanupFunction === 'function') {
         exitFunctions.push(cleanupFunction);
     } else {
         throw new Meteor.Error('Not A Function', 'ServerPresence.onCleanup requires function as parameter');
