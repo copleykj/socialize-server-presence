@@ -93,9 +93,6 @@ const start = () => {
 const exit = () => {
     // Call all of our externally supplied exit functions
     runCleanupFunctions(serverId);
-
-    // Exit application gracefully since we've caught SIGINT, SIGTERM and SIGHUP
-    process.exit();
 };
 
 /*
