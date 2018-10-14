@@ -2,6 +2,10 @@
 
 This packages keeps track of servers running your application and provides a way to run cleanup tasks when they die
 
+- [Server Presence](#server-presence)
+    - [Installation](#installation)
+    - [API](#api)
+    - [Supporting the Project](#supporting-the-project)
 
 ## Installation ##
 
@@ -40,4 +44,6 @@ ServerPresence.onCleanup(function(serverId){
 ## Supporting the Project ##
 In the spirit of keeping this and all of the packages in the [Socialize](https://atmospherejs.com/socialize) set alive, I ask that if you find this package useful, please donate to it's development.
 
-Litecoin: LXLBD9sC5dV79eQkwj7tFusUHvJA5nhuD3 / [Patreon](https://www.patreon.com/user?u=4866588) / [Paypal](https://www.paypal.me/copleykj)
+![Litecoin](http://gdurl.com/xnOe)
+
+[Patreon](https://www.patreon.com/user?u=4866588) / [Paypal](https://www.paypal.me/copleykj)
