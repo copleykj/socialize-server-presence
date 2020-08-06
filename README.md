@@ -1,15 +1,24 @@
-# Server Presence #
+# Server Presence
 
 This packages keeps track of servers running your application and provides a way to run cleanup tasks when they die
 
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+- [Supporting The Project](#supporting-the-project)
+- [Installation](#installation)
+- [API](#api)
+<!-- /TOC -->
 
-## Installation ##
+## Supporting The Project
+
+Finding the time to maintain FOSS projects can be quite difficult. I am myself responsible for over 30 personal projects across 2 platforms, as well as Multiple others maintained by the [Meteor Community Packages](https://github.com/meteor-community-packages) organization. Therfore, if you appreciate my work, I ask that you either sponsor my work through GitHub, or donate via Paypal or Patreon. Every dollar helps give cause for spending my free time fielding issues, feature requests, pull requests and releasing updates. Info can be found in the "Sponsor this project" section of the [GitHub Repo](https://github.com/copleykj/socialize-server-presence)
+
+## Installation
 
 ```shell
-$ meteor add socialize:server-presence
+meteor add socialize:server-presence
 ```
 
-## API ##
+## API
 
 **`ServerPresence.serverId();`** - Get the current Id of the server.
 
@@ -36,8 +45,3 @@ ServerPresence.onCleanup(function(serverId){
     }
 });
 ```
-
-## Supporting the Project ##
-In the spirit of keeping this and all of the packages in the [Socialize](https://atmospherejs.com/socialize) set alive, I ask that if you find this package useful, please donate to it's development.
-
-Litecoin: LXLBD9sC5dV79eQkwj7tFusUHvJA5nhuD3 / [Patreon](https://www.patreon.com/user?u=4866588) / [Paypal](https://www.paypal.me/copleykj)

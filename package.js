@@ -2,12 +2,12 @@
 Package.describe({
     name: 'socialize:server-presence',
     summary: 'Scalable server presence',
-    version: '1.0.1',
+    version: '1.0.2',
     git: 'https://github.com/copleykj/socialize-server-presence.git',
 });
 
 Package.onUse(function _(api) {
-    api.versionsFrom('1.3');
+    api.versionsFrom('1.10.2');
 
     api.use(['ecmascript', 'mongo'], 'server');
 
