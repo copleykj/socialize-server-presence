@@ -130,8 +130,10 @@ Meteor.startup(() => {
 *  signal sent when a system shuts down, it doesn't make much sense to only run out cleanup on
 *  HUP signals.
 */
-process.on('SIGTERM', stop);
 
-process.on('SIGINT', stop);
-
-process.on('SIGHUP', stop);
+['SIGINT', 'SIGHUP', 'SIGTERM'].forEach((sig) => {
+  process.once(sig, () => {
+    stop();
+    process.kill(process.pid, sig);
+  });
+});
