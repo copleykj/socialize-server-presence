@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "publish-release": "meteor publish"
+  },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
     "eslint": "^4.19.1",
