@@ -5,8 +5,13 @@ import { Mongo } from 'meteor/mongo';
 
 const Servers = new Mongo.Collection('presence:servers');
 
-Servers._ensureIndex({ lastPing: 1 }, { expireAfterSeconds: 10 });
-Servers._ensureIndex({ createdAt: -1 });
+if (Servers.createIndex) {
+  Servers.createIndex({ lastPing: 1 }, { expireAfterSeconds: 10 });
+  Servers.createIndex({ createdAt: -1 });
+} else {
+  Servers._ensureIndex({ lastPing: 1 }, { expireAfterSeconds: 10 });
+  Servers._ensureIndex({ createdAt: -1 });
+}
 
 let serverId = null;
 let isWatcher = false;
