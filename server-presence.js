@@ -5,8 +5,20 @@ import { Mongo } from 'meteor/mongo';
 
 const Servers = new Mongo.Collection('presence:servers');
 
-Servers.createIndexAsync({ lastPing: 1 }, { expireAfterSeconds: 10 });
-Servers.createIndexAsync({ createdAt: -1 });
+if (Servers.createIndexAsync) {
+  try {
+    Servers.createIndexAsync({ lastPing: 1 }, { expireAfterSeconds: 10 });
+    Servers.createIndexAsync({ createdAt: -1 });
+  } catch (e) {
+    throw new Meteor.Error('Failed to initialize indexes');
+  }
+} else if (Servers.createIndex) {
+  Servers.createIndex({ lastPing: 1 }, { expireAfterSeconds: 10 });
+  Servers.createIndex({ createdAt: -1 });
+} else {
+  Servers._ensureIndex({ lastPing: 1 }, { expireAfterSeconds: 10 });
+  Servers._ensureIndex({ createdAt: -1 });
+}
 
 let serverId = null;
 let isWatcher = false;
