@@ -6,10 +6,11 @@ Package.describe({
   git: 'https://github.com/copleykj/socialize-server-presence.git',
 });
 
-Package.onUse(function _ (api) {
-  api.versionsFrom(['1.10.2', '2.3']);
+Package.onUse(function _(api) {
+  api.versionsFrom(['3.0']);
 
-  api.use(['ecmascript', 'mongo'], 'server');
+  api.use(['ecmascript', 'typescript', 'mongo'], 'server');
+  api.use(['zodern:types']);
 
-  api.mainModule('server-presence.js', 'server');
+  api.mainModule('server-presence.ts', 'server');
 });
